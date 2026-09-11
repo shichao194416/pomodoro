@@ -86,12 +86,17 @@
 }
 
 .app-header {
-  position: fixed;
-  top: env(safe-area-inset-top, 0);
-  left: 0;
-  right: 0;
-  z-index: 1000;
-  padding: 1.5rem 2rem;
+  /*
+   * In normal flow rather than `position: fixed`. A fixed bar does not reserve
+   * space, so the scroll area had to clear it with a hand-tuned padding number
+   * — and those numbers did not account for the iOS safe-area insets, which
+   * pushed the first rows of content underneath the header.
+   */
+  flex: 0 0 auto;
+  padding: calc(1.5rem + env(safe-area-inset-top, 0px))
+    calc(2rem + env(safe-area-inset-right, 0px))
+    1.5rem
+    calc(2rem + env(safe-area-inset-left, 0px));
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -164,13 +169,15 @@
 }
 
 .main-content {
-  flex: 1;
-  padding-top: 85px;
-  padding-bottom: 70px;
+  /* The header and nav are flex siblings now, so this area is exactly the
+     space between them — no padding hacks, nothing can slide underneath. */
+  flex: 1 1 auto;
+  min-height: 0;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   touch-action: pan-y;
   overscroll-behavior: contain;
+  padding: 0.5rem env(safe-area-inset-right, 0px) 0.5rem env(safe-area-inset-left, 0px);
 }
 
 .card {
@@ -179,16 +186,17 @@
 
 
 .bottom-nav {
+  /* Also in normal flow — see the note on .app-header. As a fixed bar this sat
+     above the home-indicator inset while the scroll area only reserved 60px,
+     so the last rows showed through the gap below the bar. */
+  flex: 0 0 auto;
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 1.5rem;
-  position: fixed;
-  bottom: env(safe-area-inset-bottom, 0);
-  left: 0;
-  right: 0;
-  z-index: 1000;
-  padding: 0.75rem 2rem;
+  padding: 0.75rem calc(2rem + env(safe-area-inset-right, 0px))
+    calc(0.75rem + env(safe-area-inset-bottom, 0px))
+    calc(2rem + env(safe-area-inset-left, 0px));
   background: linear-gradient(180deg, var(--gradient-footer-start) 0%, var(--gradient-footer-end) 100%);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
@@ -242,7 +250,10 @@
 
 @media (max-width: 600px) {
   .app-header {
-	padding: 1rem;
+	padding: calc(0.8rem + env(safe-area-inset-top, 0px))
+	  calc(1rem + env(safe-area-inset-right, 0px))
+	  0.8rem
+	  calc(1rem + env(safe-area-inset-left, 0px));
   }
 
   .logo-title {
@@ -259,13 +270,10 @@
 	font-size: 0.9rem;
   }
 
-  .main-content {
-	padding-top: 70px;
-	padding-bottom: 60px;
-  }
-
   .bottom-nav {
-	padding: 1rem;
+	padding: 0.6rem calc(1rem + env(safe-area-inset-right, 0px))
+	  calc(0.6rem + env(safe-area-inset-bottom, 0px))
+	  calc(1rem + env(safe-area-inset-left, 0px));
 	gap: 0.5rem;
   }
 
@@ -319,7 +327,9 @@
   }
 
   .app-header {
-	padding: 0.3rem calc(0.9rem + env(safe-area-inset-right, 0px)) 0.3rem
+	padding: calc(0.3rem + env(safe-area-inset-top, 0px))
+	  calc(0.9rem + env(safe-area-inset-right, 0px))
+	  0.3rem
 	  calc(0.9rem + env(safe-area-inset-left, 0px));
   }
 
@@ -338,8 +348,8 @@
   }
 
   .main-content {
-	padding-top: 48px;
-	padding-bottom: 44px;
+	padding-top: 0.4rem;
+	padding-bottom: 0.4rem;
 	padding-left: calc(0.5rem + env(safe-area-inset-left, 0px));
 	padding-right: calc(0.5rem + env(safe-area-inset-right, 0px));
   }
@@ -375,7 +385,9 @@
   }
 
   .bottom-nav {
-	padding: 0.25rem 1rem;
+	padding: 0.25rem calc(1rem + env(safe-area-inset-right, 0px))
+	  calc(0.25rem + env(safe-area-inset-bottom, 0px))
+	  calc(1rem + env(safe-area-inset-left, 0px));
 	gap: 1rem;
   }
 
