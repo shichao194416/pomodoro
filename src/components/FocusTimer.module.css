@@ -48,8 +48,12 @@
 
 .aura {
   position: absolute;
+  /* Explicit centring: an absolutely positioned flex child's static position
+     is implementation-defined, and the breathe animation owns `transform`. */
+  inset: 0;
+  margin: auto;
   width: min(76vh, 440px);
-  aspect-ratio: 1;
+  height: min(76vh, 440px);
   border-radius: 50%;
   background: radial-gradient(circle, var(--focus-halo) 0%, transparent 68%);
   filter: blur(30px);
