@@ -15,7 +15,7 @@
  */
 import { execFileSync } from 'node:child_process';
 import { writeFileSync } from 'node:fs';
-import { dirname, resolve } from 'node:path';
+import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -25,7 +25,20 @@ const REPO = process.env.GH_REPO ?? 'shichao194416/pomodoro';
 const repoName = REPO.split('/')[1];
 // A GitHub Pages project site is served from /<repo>/, so assets must match.
 const basePath = process.env.VITE_BASE ?? `/${repoName}/`;
-const npmCmd = process.platform === 'win32' ? 'npm.cmd' : 'npm';
+
+/**
+ * Node refuses to execFile a `.cmd` shim on Windows (EINVAL, since the
+ * CVE-2024-27980 hardening), so instead of shelling out to `npm run build`
+ * the tools are launched directly with the current node binary. Same steps as
+ * the `build` script: typecheck, then bundle.
+ */
+function runNodeTool(relativeBin, args) {
+  execFileSync(process.execPath, [resolve(root, 'node_modules', relativeBin), ...args], {
+    cwd: root,
+    stdio: 'inherit',
+    env: { ...process.env, VITE_BASE: basePath },
+  });
+}
 
 function resolveToken() {
   if (process.env.GH_TOKEN) return process.env.GH_TOKEN;
@@ -59,11 +72,8 @@ console.log(`repo      ${REPO}`);
 console.log(`base      ${basePath}\n`);
 
 console.log('--- 1/2 build ---');
-execFileSync(npmCmd, ['run', 'build'], {
-  cwd: root,
-  stdio: 'inherit',
-  env: { ...process.env, VITE_BASE: basePath },
-});
+runNodeTool(join('typescript', 'bin', 'tsc'), ['-b']);
+runNodeTool(join('vite', 'bin', 'vite.js'), ['build']);
 
 // Without this GitHub Pages runs Jekyll, which drops files it does not like.
 writeFileSync(resolve(root, 'dist', '.nojekyll'), '');
