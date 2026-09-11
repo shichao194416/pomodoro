@@ -1,0 +1,203 @@
+/* ===========================================================================
+   TAG STATS COMPONENT STYLES
+   =========================================================================== */
+
+/**
+ * .statsContainer - Main Statistics Section
+ * ------------------------------------------
+ * Container for all statistics displays
+ */
+.statsContainer {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - 185px);
+  background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-card) 100%);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px var(--shadow-md);
+}
+
+.statsContainer h2 {
+  color: var(--accent-primary);
+  margin: 0;
+  padding: 0.5rem  2rem 1rem 2rem;
+  font-size: 1.5rem;
+  background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-card) 100%);
+  border-radius: 16px 16px 0 0;
+  text-shadow: 0 2px 8px var(--shadow-accent);
+}
+
+/**
+ * .statsContent - Scrollable Content Wrapper
+ * -------------------------------------------
+ * Wraps the scrollable content (overall stats and tag list)
+ */
+.statsContent {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 2rem;
+  background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-card) 100%);
+  border-radius: 0 0 16px 16px;
+}
+
+/**
+ * .overallStats - Summary Statistics Card
+ * ----------------------------------------
+ * Highlighted section showing total sessions and time
+ */
+.overallStats {
+  background: var(--shadow-accent);
+  border: 2px solid var(--border-primary);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.overallStats h3 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  color: var(--accent-primary);
+  font-size: 1.3rem;
+}
+
+.overallStats p {
+  font-size: 1.1rem;
+  margin: 0.8rem 0;
+  color: var(--text-secondary);
+}
+
+.overallStats strong {
+  color: var(--text-primary);
+  font-size: 1.2rem;
+}
+
+/**
+ * .emptyState - Placeholder When No Data Exists
+ * ----------------------------------------------
+ * Shown when user hasn't completed any Pomodoro sessions yet
+ */
+.emptyState {
+  color: var(--text-muted);
+  font-style: italic;
+  padding: 2rem;
+  text-align: center;
+}
+
+/**
+ * Session History
+ */
+.sessionList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.sessionItem {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.sessionHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.sessionDate {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.sessionTag {
+  background: var(--accent-primary);
+  color: #fff;
+  padding: 0.2rem 0.6rem;
+  border-radius: 12px;
+}
+
+.sessionDuration {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  margin-left: auto;
+}
+
+.sessionNote {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  margin: 0.5rem 0 0;
+  font-style: italic;
+  border-left: 2px solid var(--accent-primary);
+  padding-left: 0.75rem;
+}
+/**
+ * Tag Filter PIlls
+ */
+.tagFilter{
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap:wrap;
+  margin: 1.5rem 0 1rem;
+}
+
+.tagFilterBtn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: var(--text-secondary);
+  padding: 0.4rem 1rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tagFilterBtn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--accent-primary);
+}
+
+.tagFilterBtnActive {
+  background: var(--accent-primary);
+  color: #fff;
+  border-color: var(--accent-primary);
+}
+
+/**
+ * RESPONSIVE DESIGN - Mobile Optimization
+ * ----------------------------------------
+ * Adjusts stats for smaller screens
+ */
+@media (max-width: 600px) {
+  .statsContainer {
+    max-height: none;
+  }
+
+  .statsContainer h2 {
+    top: 70px;
+    font-size: 1.2rem;
+    padding: 0.75rem 1rem;
+  }
+
+  .statsContent {
+    padding: 1rem;
+  }
+}
+
+/* ===========================================================================
+   ADDED: the Daily Summary card now sits above this one and the page itself
+   scrolls, so the inner scroll container is no longer needed.
+   =========================================================================== */
+
+.statsContainer {
+  max-height: none;
+}
+
+.statsContent {
+  overflow: visible;
+}
+

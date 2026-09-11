@@ -1,0 +1,44 @@
+
+
+.sessionNote {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+.textarea {
+  width: 100%;
+  min-height: 80px;
+  padding: 0.8rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-primary);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 1rem;
+  font-family: inherit;
+  resize: vertical;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.textarea::placeholder {
+  color: var(--text-muted);
+}
+
+.textarea:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 2px var(--shadow-accent);
+}
+
+@media (max-width: 600px) {
+  .sessionNote {
+	padding: 0 1rem;
+  }
+
+  .textarea {
+    min-height: 60px;
+	font-size: 0.9rem;
+  }
+}
+
+

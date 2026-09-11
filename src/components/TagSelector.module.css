@@ -1,0 +1,190 @@
+/* ===========================================================================
+   TAG SELECTOR COMPONENT STYLES
+   =========================================================================== */
+
+/**
+ * .tagSelector - Main Tag Selector Container
+ * -------------------------------------------
+ * Matches the timer component width for visual consistency.
+ */
+.tagSelector {
+  max-width: 500px;
+  margin: 1rem auto;
+}
+
+.tagSelector h3 {
+  text-align: center;
+  color: var(--accent-primary);
+  margin-bottom: 1.5rem;
+}
+
+/**
+ * .addTagSection - Container for Add Tag Controls
+ * ------------------------------------------------
+ * Wraps the add tag button or form
+ */
+.addTagSection {
+  margin-bottom: 1.5rem;
+}
+
+/**
+ * .addTagBtn - Add Tag Button
+ * ----------------------------
+ * Button to reveal the tag creation form
+ */
+.addTagBtn {
+  flex: 1;
+  padding: 0.8rem;
+  background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-card-hover) 100%);
+  border: 2px dashed var(--border-primary);
+  color: var(--text-secondary);
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.addTagBtn:hover:not(:disabled) {
+  background: linear-gradient(135deg, var(--bg-card-hover) 0%, #4a4a4a 100%);
+  border-color: var(--border-hover);
+  color: var(--accent-primary);
+}
+
+/**
+ * .addTagForm - Add Tag Form Container
+ * -------------------------------------
+ * Form with input and action buttons
+ */
+.addTagForm {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.addTagForm input {
+  flex: 1;
+  padding: 0.8rem;
+  background: var(--bg-card);
+  border: 1px solid #444;
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 1rem;
+}
+
+.addTagForm input:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 2px var(--shadow-accent);
+}
+
+.addTagForm button {
+  padding: 0.8rem 1.2rem;
+  background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.addTagForm button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px var(--shadow-accent-md);
+}
+
+/**
+ * .tagsList - Container for Tag Buttons
+ * --------------------------------------
+ * Flexbox layout for tag chips
+ */
+.tagsList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+/**
+ * .tagBtn - Individual Tag Button
+ * --------------------------------
+ * Base styles for tag selection buttons
+ */
+.tagBtn {
+  background-color: var(--bg-card);
+  color: var(--text-secondary);
+  border: 1px solid #444;
+  margin: var(--space-sm);
+  padding: var(--space-sm) 0.875rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.tagBtn:hover {
+  background-color: var(--bg-card-hover);
+  color: var(--text-primary);
+}
+
+.editInput {
+  background-color: var(--bg-card);
+  color: var(--text-primary);
+  border: 1px solid var(--accent-light);
+  margin: var(--space-sm);
+  padding: var(--space-sm) 0.875rem;
+  border-radius: 8px;
+  cursor: text;
+  transition: all 0.3s ease;
+  outline: none;
+  font-size: inherit;
+}
+
+
+/**
+ * .tagBtn.active - Active Tag State
+ * ----------------------------------
+ * Highlights the currently selected tag
+ */
+.tagBtn.active {
+  background-color: var(--accent-primary);
+  color: #fff;
+  font-weight: bold;
+  border: 2px solid var(--accent-light);
+  box-shadow: 0 0 10px var(--shadow-accent-lg);
+  transition: all 0.3s ease;
+}
+
+/**
+ * .tagActions - Container for Add/Delete buttons 
+ */
+.tagActions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+/**
+ * .deleteTagBtn - Delete Tag Button
+ */
+.deleteTagBtn {
+  width: 50px;
+  padding: 0.8rem;
+  background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-card-hover) 100%);
+  border: 2px dashed var(--border-primary);
+  color: var(--text-secondary);
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.deleteTagBtn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #4a2020 0%, #3a1515 100%);
+  border-color: #ff4444;
+  color: #ff6666;
+}
+
+.deleteTagBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}

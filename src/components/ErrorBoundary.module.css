@@ -1,0 +1,65 @@
+.errorContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-md);
+  padding: var(--space-xl);
+  text-align: center;
+}
+
+.errorContainerFullPage {
+  composes: errorContainer;
+  min-height: 100dvh;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.icon {
+  color: var(--accent-primary);
+}
+
+.title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.message {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  max-width: 32ch;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.resetButton {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-sm) var(--space-md);
+  border: none;
+  border-radius: 8px;
+  background-color: var(--accent-primary);
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.resetButton:hover {
+  opacity: 0.85;
+}
+
+@media (max-width: 600px) {
+  .errorContainer,
+  .errorContainerFullPage {
+    padding: var(--space-lg);
+  }
+
+  .title {
+    font-size: 1.1rem;
+  }
+}

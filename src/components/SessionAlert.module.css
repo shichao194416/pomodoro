@@ -1,0 +1,223 @@
+/* ===========================================================================
+   SESSION ALERT - blocking end-of-phase notification
+   =========================================================================== */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 3000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: calc(1rem + env(safe-area-inset-top, 0px))
+    calc(1rem + env(safe-area-inset-right, 0px))
+    calc(1rem + env(safe-area-inset-bottom, 0px))
+    calc(1rem + env(safe-area-inset-left, 0px));
+  background: rgba(5, 14, 20, 0.82);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  animation: alertFadeIn 0.22s ease-out;
+}
+
+.card {
+  width: min(420px, 100%);
+  padding: 2rem 1.75rem;
+  border-radius: 26px;
+  text-align: center;
+  background: linear-gradient(150deg, var(--bg-secondary) 0%, var(--bg-card) 100%);
+  border: 1px solid var(--border-hover);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.55);
+  animation: alertPop 0.28s cubic-bezier(0.2, 1.2, 0.4, 1);
+}
+
+.cardWork {
+  border-color: var(--accent-primary);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.55), 0 0 0 1px var(--shadow-accent-md);
+}
+
+.cardBreak {
+  border-color: rgba(42, 157, 143, 0.6);
+}
+
+/* --- Icon with pulsing halo -------------------------------------------------*/
+
+.iconRing {
+  position: relative;
+  width: 86px;
+  height: 86px;
+  margin: 0 auto 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.cardWork .iconRing {
+  background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+  color: #fff;
+}
+
+.cardBreak .iconRing {
+  background: linear-gradient(135deg, #2a9d8f 0%, #1d7a70 100%);
+  color: #fff;
+}
+
+.icon {
+  position: relative;
+  z-index: 1;
+}
+
+.pulse {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  animation: pulseRing 1.6s ease-out infinite;
+}
+
+.cardWork .pulse {
+  background: var(--accent-primary);
+}
+
+.cardBreak .pulse {
+  background: #2a9d8f;
+}
+
+/* --- Text ------------------------------------------------------------------*/
+
+.title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.4rem;
+}
+
+.body {
+  font-size: 1.05rem;
+  color: var(--text-secondary);
+}
+
+.duration {
+  margin-top: 0.85rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--accent-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.cardBreak .duration {
+  color: #2a9d8f;
+}
+
+/* --- Actions ---------------------------------------------------------------*/
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-top: 1.5rem;
+}
+
+.primaryBtn {
+  width: 100%;
+  padding: 0.95rem 1.25rem;
+  border-radius: 14px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+  box-shadow: 0 8px 24px var(--shadow-accent-md);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.primaryBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px var(--shadow-accent-lg);
+}
+
+.primaryBtn:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.ghostBtn {
+  width: 100%;
+  padding: 0.7rem 1.25rem;
+  border-radius: 14px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  background: transparent;
+  border: 1px solid transparent;
+  cursor: pointer;
+}
+
+.ghostBtn:hover {
+  color: var(--text-primary);
+  background: var(--bg-card-hover);
+}
+
+/* --- Animations ------------------------------------------------------------*/
+
+@keyframes alertFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes alertPop {
+  from { opacity: 0; transform: scale(0.9) translateY(12px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@keyframes pulseRing {
+  0% { transform: scale(1); opacity: 0.55; }
+  100% { transform: scale(1.9); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .overlay,
+  .card,
+  .pulse {
+    animation: none;
+  }
+}
+
+/* --- Landscape phones: keep the whole alert on screen ----------------------*/
+
+@media (orientation: landscape) and (max-height: 620px) {
+  .card {
+    width: min(660px, 100%);
+    padding: 1rem 1.5rem;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-areas:
+      'icon title'
+      'icon body'
+      'icon dur';
+    column-gap: 1.25rem;
+    row-gap: 0.15rem;
+    align-items: center;
+    text-align: left;
+    border-radius: 20px;
+  }
+
+  .iconRing {
+    grid-area: icon;
+    width: 66px;
+    height: 66px;
+    margin: 0;
+  }
+
+  .title { grid-area: title; font-size: 1.3rem; margin: 0; }
+  .body { grid-area: body; font-size: 0.95rem; }
+  .duration { grid-area: dur; margin-top: 0; font-size: 1.15rem; }
+
+  .actions {
+    grid-column: 1 / -1;
+    flex-direction: row;
+    margin-top: 0.9rem;
+  }
+
+  .primaryBtn { flex: 2; padding: 0.7rem 1rem; font-size: 1rem; }
+  .ghostBtn { flex: 1; padding: 0.7rem 1rem; }
+}
