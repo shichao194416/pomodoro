@@ -110,10 +110,13 @@
 
 .logo-title {
   margin: 0;
+  /* The base h1 size in the reset is 3.2rem, which is far too large here. */
+  font-size: clamp(1.15rem, 4.6vw, 1.45rem);
+  font-weight: 700;
+  letter-spacing: 0.02em;
   color: var(--text-primary);
   display: flex;
   align-items: center;
-  gap: 0.5rem;
 }
 
 .header-controls {
@@ -256,10 +259,6 @@
 	  calc(1rem + env(safe-area-inset-left, 0px));
   }
 
-  .logo-title {
-	font-size: 1.5rem;
-  }
-
   .theme-toggle {
 	padding: 0.4rem 0.8rem;
 	font-size: 1rem;
@@ -293,28 +292,6 @@
   flex-direction: column;
 }
 
-/* The rotate nudge only makes sense on a portrait phone. */
-.rotate-hint {
-  display: none;
-}
-
-@media (orientation: portrait) and (max-width: 900px) {
-  .rotate-hint {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	gap: 0.4rem;
-	width: fit-content;
-	margin: 0 auto 0.6rem;
-	padding: 0.4rem 0.9rem;
-	font-size: 0.8rem;
-	color: var(--text-muted);
-	background: var(--bg-card-hover);
-	border: 1px dashed var(--border-active);
-	border-radius: 99px;
-  }
-}
-
 /**
  * Landscape phone layout.
  * A web app cannot lock orientation on iOS, so instead the whole UI is
@@ -322,10 +299,6 @@
  * with the countdown on the left and the label/note panel on the right.
  */
 @media (orientation: landscape) and (max-height: 620px) {
-  .rotate-hint {
-	display: none;
-  }
-
   .app-header {
 	padding: calc(0.3rem + env(safe-area-inset-top, 0px))
 	  calc(0.9rem + env(safe-area-inset-right, 0px))
@@ -335,12 +308,6 @@
 
   .logo-title {
 	font-size: 0.95rem;
-	gap: 0.35rem;
-  }
-
-  .logo-title svg {
-	width: 24px;
-	height: 24px;
   }
 
   .theme-toggle {
@@ -348,6 +315,8 @@
   }
 
   .main-content {
+	display: flex;
+	flex-direction: column;
 	padding-top: 0.4rem;
 	padding-bottom: 0.4rem;
 	padding-left: calc(0.5rem + env(safe-area-inset-left, 0px));
@@ -358,30 +327,27 @@
 	padding: 0.5rem;
   }
 
+  /* Only the countdown is left in this view, so it is centred in the space
+     between the header and the nav rather than split into two columns. */
   .timer-view {
-	display: grid;
-	grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
-	gap: 0.5rem;
-	align-items: start;
+	flex: 1 1 auto;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
   }
 
   .timer-card {
-	grid-column: 1;
-	grid-row: 1 / span 2;
-	align-self: stretch;
+	width: 100%;
+	max-width: 640px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
   }
 
-  .tagselector-card {
-	grid-column: 2;
-	grid-row: 1;
-  }
-
-  .session-note-slot {
-	grid-column: 2;
-	grid-row: 2;
+  .stats-view {
+	flex: 1 1 auto;
+	min-height: 0;
   }
 
   .bottom-nav {

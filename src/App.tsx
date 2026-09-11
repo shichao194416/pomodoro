@@ -1,19 +1,17 @@
 import { useEffect, useRef, useState } from 'react';
-import { Menu, Timer as TimerIcon, BarChart3, RotateCw, Maximize2 } from 'lucide-react';
+import { Menu, Timer as TimerIcon, BarChart3, Maximize2 } from 'lucide-react';
 import { usePomodoro } from './hooks/pomodoro/PomodoroContext';
 import { useTimerCompletion } from './hooks/pomodoro/useTimerCompletion';
 import { useLanguage } from './contexts/LanguageContext';
 import { useMediaQuery, LANDSCAPE_PHONE_QUERY } from './hooks/useMediaQuery';
 import { useWakeLock } from './hooks/useWakeLock';
+import { HEADER_GREETING } from './config';
 import { Timer } from './components/Timer';
-import { TagSelector } from './components/TagSelector';
 import { Stats } from './components/Stats';
 import { DailySummary } from './components/DailySummary';
 import { SessionAlert } from './components/SessionAlert';
 import { FocusTimer } from './components/FocusTimer';
 import './App.css';
-import {SessionNote} from './components/SessionNote';
-import {Logo} from './components/Logo';
 import {ErrorBoundary} from './components/ErrorBoundary';
 import {SettingsPanel} from './components/SettingsPanel';
 
@@ -22,7 +20,6 @@ type ViewType = 'timer' | 'stats';
 function App() {
   const {
 	tag,
-	setTag,
 	mode,
 	isRunning,
 	timeLeft,
@@ -90,7 +87,7 @@ function App() {
 	  ) : (
 		<>
 		  <header className="app-header">
-			<h1 className="logo-title"><Logo size={40} /> {translations.appName}</h1>
+			<h1 className="logo-title">{HEADER_GREETING}</h1>
 			<div className="header-controls">
 			  {activeView === 'timer' && isLandscapePhone && (
 				<button
@@ -120,25 +117,8 @@ function App() {
 				fallbackResetLabel={translations.errorBoundaryReset}
 			  >
 				<div className="timer-view">
-				  {/*
-					Portrait-only nudge. A web app cannot force an orientation
-					lock on iOS, so the landscape layout simply takes over once
-					the phone is turned.
-				  */}
-				  <p className="rotate-hint">
-					<RotateCw size={14} aria-hidden="true" /> {translations.rotateHint}
-				  </p>
-
 				  <div className="card timer-card">
 					<Timer wakeLockActive={wakeLockActive} />
-				  </div>
-
-				  <div className="card tagselector-card">
-					<TagSelector tag={tag} setTag={setTag} mode={mode} />
-				  </div>
-
-				  <div className="card session-note-slot">
-					<SessionNote />
 				  </div>
 				</div>
 			  </ErrorBoundary>

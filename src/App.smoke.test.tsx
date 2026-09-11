@@ -79,10 +79,10 @@ afterEach(() => {
 });
 
 describe('番茄钟 App', () => {
-  it('首次打开渲染中文界面并显示默认 25 分钟倒计时', () => {
+  it('首次打开渲染鼓励语并显示默认 25 分钟倒计时', () => {
     renderApp();
 
-    expect(screen.getByText('番茄钟')).toBeTruthy();
+    expect(screen.getByText('加油李世超')).toBeTruthy();
     // Mode indicator label
     expect(screen.getByText('专注学习')).toBeTruthy();
     // Default work duration rendered as MM:SS
@@ -90,8 +90,10 @@ describe('番茄钟 App', () => {
     // Navigation
     expect(screen.getByText('计时')).toBeTruthy();
     expect(screen.getByText('总结')).toBeTruthy();
-    // The landscape nudge exists in the DOM (CSS decides when to show it)
-    expect(screen.getByText('横屏查看效果更好')).toBeTruthy();
+    // The removable extras are gone.
+    expect(screen.queryByText('选择标签')).toBeNull();
+    expect(screen.queryByText('横屏查看效果更好')).toBeNull();
+    expect(screen.queryByPlaceholderText(/给这次番茄加个备注/)).toBeNull();
   });
 
   it('每日总结只统计专注时段，并排除休息', () => {
@@ -146,11 +148,10 @@ describe('番茄钟 App', () => {
     expect(screen.getByRole('button', { name: '开始' })).toBeTruthy();
 
     // No chrome and no clutter at all.
-    expect(screen.queryByText('番茄钟')).toBeNull();          // header title
+    expect(screen.queryByText('加油李世超')).toBeNull();       // header greeting
     expect(screen.queryByText('计时')).toBeNull();             // bottom nav
     expect(screen.queryByText('总结')).toBeNull();
     expect(screen.queryByRole('button', { name: 'Timer view' })).toBeNull();
-    expect(screen.queryByText('横屏查看效果更好')).toBeNull();  // portrait nudge
     // The only label kept is the current phase, so a break is never mistaken
     // for study time.
     expect(screen.getByText('专注学习')).toBeTruthy();
@@ -163,7 +164,7 @@ describe('番茄钟 App', () => {
     fireEvent.click(screen.getByRole('button', { name: '退出横屏' }));
 
     // Full interface is back…
-    expect(screen.getByText('番茄钟')).toBeTruthy();
+    expect(screen.getByText('加油李世超')).toBeTruthy();
     expect(screen.getByRole('button', { name: 'Timer view' })).toBeTruthy();
     expect(screen.queryByText('退出横屏')).toBeNull();
 
@@ -177,7 +178,7 @@ describe('番茄钟 App', () => {
     mockViewport({ landscapePhone: false });
     renderApp();
 
-    expect(screen.getByText('番茄钟')).toBeTruthy();
+    expect(screen.getByText('加油李世超')).toBeTruthy();
     expect(screen.queryByText('退出横屏')).toBeNull();
   });
 });
