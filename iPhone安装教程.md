@@ -4,6 +4,19 @@
 
 ---
 
+## ⚡ 已经部署好了，直接跳到第五节
+
+**你的 App 地址：<https://shichao194416.github.io/pomodoro/>**
+
+线上已经跑起来了，全部资源校验通过。**现在你只需要做两件事**：
+
+1. 用 iPhone 的 **Safari** 打开上面这个地址
+2. 分享 → **添加到主屏幕**
+
+具体操作见 **第五节**。第三节是已经完成的部署记录（含以后怎么更新），第四节是备用的 Netlify 方案，第一次安装可以先跳过。
+
+---
+
 ## 零、先说清楚原理
 
 iPhone 装 App 有三条路：
@@ -69,7 +82,15 @@ npm run serve -- 4173 0.0.0.0
 
 ---
 
-## 三、方案 A：发布到 GitHub Pages（推荐，免费且永久）
+## 三、方案 A：发布到 GitHub Pages ✅ 已完成
+
+> **这一步已经帮你做完了，不用再动手。**
+>
+> - 线上地址：<https://shichao194416.github.io/pomodoro/>
+> - 源码仓库：<https://github.com/shichao194416/pomodoro>
+> - 发布方式：`main` 分支存源码，`gh-pages` 分支存构建产物
+>
+> 下面 3.1–3.4 保留原始步骤作为参考；**3.5 记录了这次实际踩到的三个坑，3.6 是以后更新线上版本的方法**。
 
 ### 3.1 建一个空仓库
 
@@ -123,7 +144,63 @@ https://<你的用户名>.github.io/pomodoro/
 
 > 如果 Actions 是红色叉：点进去看报错。绝大多数情况是没把 `pomodoro-app` 里的文件推到仓库根目录。仓库首页应该能直接看到 `package.json`、`src/`、`index.html`。
 
-**以后每次改代码，只要 `git push`，网站会自动重新构建发布。**
+### 3.5 这次实际踩到的三个坑
+
+**坑 1：Token 缺 `workflow` 权限，推不了 Actions 工作流**
+
+推送 `.github/workflows/` 下的文件时被 GitHub 拒绝：
+
+```
+refusing to allow an OAuth App to create or update workflow
+`.github/workflows/deploy.yml` without `workflow` scope
+```
+
+解决办法：工作流文件挪到 `deploy/github-actions-deploy.yml` 备用，改用 **`gh-pages` 分支**发布（只需要普通的 `repo` 权限）。
+
+**坑 2：`github.com:443` 被网络阻断，`git push` 连不上**
+
+诊断结果（同一时刻）：
+
+| 目标 | 443 端口 |
+|---|---|
+| `github.com` | ❌ 超时 |
+| `api.github.com` | ✅ 通 |
+| `ssh.github.com` | ✅ 通 |
+| `shichao194416.github.io` | ✅ 通 |
+
+DNS 解析出的 IP 是正常的，所以是 TCP 层被阻断——国内访问 GitHub 的常见情况。随时可以自己测：
+
+```powershell
+cd C:\Users\15547\Desktop\番茄钟\pomodoro-app
+npm run netcheck
+```
+
+绕过办法：**用 GitHub REST API 推送**，全程只访问 `api.github.com`。
+
+**坑 3：空仓库不能直接建 blob**
+
+新建的空仓库用 Git Data API 建文件会报 `409 Git Repository is empty.`，必须先打一个初始提交。这个已经在 `tools/gh-api-push.mjs` 里自动处理。
+
+### 3.6 以后怎么更新线上版本
+
+改完代码后，一条命令：
+
+```powershell
+cd C:\Users\15547\Desktop\番茄钟\pomodoro-app
+npm run deploy
+```
+
+它会自动：按 `/pomodoro/` 基路径构建 → 把 `dist/` 通过 API 推到 `gh-pages` 分支。推完约 1 分钟生效。
+
+然后校验线上资源：
+
+```powershell
+npm run verify
+```
+
+输出里全部是 `ok 200` 就说明发布成功。
+
+> 哪天网络恢复（或你开了代理），`git push` 也能用。但注意：**`git push` 只更新源码，不会更新线上站点**，之后仍要跑一次 `npm run deploy`。
 
 ---
 
@@ -149,7 +226,7 @@ https://<你的用户名>.github.io/pomodoro/
 
 **必须用 Safari。** 微信内置浏览器、Chrome、Edge 都不行（Chrome 只能加个书签，做不出独立全屏 App）。
 
-1. 用 **Safari** 打开你的网址，例如 `https://<你的用户名>.github.io/pomodoro/`
+1. 用 **Safari** 打开 <https://shichao194416.github.io/pomodoro/>
 2. 等页面**完全加载出来**（看到番茄图标和 `25:00`）
 3. 点屏幕**底部中间的「分享」按钮**（一个方框 + 向上箭头）
 4. 在弹出的菜单里**向下滑动**，找到 **「添加到主屏幕」**，点它
@@ -274,14 +351,15 @@ App 有自动更新机制。依次试：
 
 ```powershell
 cd C:\Users\15547\Desktop\番茄钟\pomodoro-app
-npm test          # 跑一下冒烟测试
-npm run build     # 确认能构建
-git add .
-git commit -m "说明这次改了什么"
-git push
+npm test          # 跑冒烟测试
+npm run deploy    # 构建 + 发布到线上
+npm run verify    # 校验线上资源全部可访问
 ```
 
-GitHub Pages 会自动重新发布（Actions 里能看到进度）。手机上按第九节的方法刷新即可。
+`npm run deploy` 会自动完成构建和发布，约 1 分钟后手机上就能拿到新版本。
+如果想同时把源码同步到 GitHub，可以再 `git add . && git commit -m "..." && git push`（网络允许时）。
+
+手机上刷新到新版本的方法见第九节。
 
 想重新画图标（改颜色、改形状就编辑 `tools/make-icons.mjs`）：
 
@@ -301,5 +379,8 @@ npm run icons
 | 局域网给手机看 | `npm run serve -- 4173 0.0.0.0` |
 | iPhone 尺寸对照页 | <http://127.0.0.1:4173/__dev/frame.html> |
 | 跑测试 | `npm test` |
+| **发布到线上** | **`npm run deploy`** |
+| **校验线上站点** | **`npm run verify`** |
+| 诊断 GitHub 连通性 | `npm run netcheck` |
 | 重新生成图标 | `npm run icons` |
 | 依赖装不上时 | `npm install --ignore-scripts` |

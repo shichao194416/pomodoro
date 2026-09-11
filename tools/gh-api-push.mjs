@@ -103,9 +103,14 @@ const files = await walk(localDir);
 console.log(`files    ${files.length}`);
 
 /**
- * The Git Data API answers 409 "Git Repository is empty." when you try to
- * create a blob in a repository that has no commits yet, so an initial commit
- * has to be planted through the Contents API first.
+ * Two GitHub quirks have to be worked around before blobs can be created:
+ *
+ *  1. The Git Data API answers 409 "Git Repository is empty." in a repository
+ *     that has no commits, so an initial commit must be planted through the
+ *     Contents API.
+ *  2. The Contents API can only commit to a branch that already exists, so a
+ *     brand new branch (e.g. gh-pages) has to be created as a ref pointing at
+ *     an existing commit first.
  */
 async function ensureBranch() {
   const refPath = `/repos/${OWNER}/${REPO}/git/ref/heads/${branch}`;
@@ -113,14 +118,35 @@ async function ensureBranch() {
     const ref = await api('GET', refPath);
     return ref.object.sha;
   } catch {
+    /* branch does not exist yet — create it below */
+  }
+
+  const defaultSha = async () => {
+    const repo = await api('GET', `/repos/${OWNER}/${REPO}`);
+    const ref = await api('GET', `/repos/${OWNER}/${REPO}/git/ref/heads/${repo.default_branch}`);
+    return ref.object.sha;
+  };
+
+  let baseSha = null;
+  try {
+    baseSha = await defaultSha();
+  } catch {
+    baseSha = null;
+  }
+
+  if (!baseSha) {
     await api('PUT', `/repos/${OWNER}/${REPO}/contents/.gitkeep`, {
       message: 'chore: initialise repository',
       content: Buffer.from('').toString('base64'),
-      branch,
     });
-    const ref = await api('GET', refPath);
-    return ref.object.sha;
+    baseSha = await defaultSha();
   }
+
+  await api('POST', `/repos/${OWNER}/${REPO}/git/refs`, {
+    ref: `refs/heads/${branch}`,
+    sha: baseSha,
+  });
+  return baseSha;
 }
 
 const parentSha = await ensureBranch();

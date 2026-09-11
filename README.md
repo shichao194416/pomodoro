@@ -4,6 +4,9 @@
 
 > 改造自 [drt-dave/pomodoro](https://github.com/drt-dave/pomodoro)（MIT License）。
 
+**已上线：<https://shichao194416.github.io/pomodoro/>**
+用 iPhone 的 **Safari** 打开这个地址 → 分享 → 添加到主屏幕，就能当 App 用。
+
 ---
 
 ## 功能
@@ -62,9 +65,52 @@ npm run icons
 
 ## 部署到 GitHub Pages
 
-推送到 `main` 分支后，`.github/workflows/deploy.yml` 会自动跑测试、构建并发布。
+线上地址：<https://shichao194416.github.io/pomodoro/>
+仓库：<https://github.com/shichao194416/pomodoro>
 
-`VITE_BASE` 由 workflow 自动设为 `/<仓库名>/`，本地构建根路径时无需设置。
+Pages 的发布源是 **`gh-pages` 分支**（`main` 放源码，`gh-pages` 放构建产物）。
+
+### 为什么不是 GitHub Actions 自动构建
+
+原本的 `deploy.yml` 放在 `.github/workflows/` 下，但 GitHub 规定：**推送/修改工作流文件需要 Token 具备 `workflow` 权限**，而当前 gh 登录的 Token 只有 `gist, read:org, repo`，因此推送被拒：
+
+```
+refusing to allow an OAuth App to create or update workflow
+`.github/workflows/deploy.yml` without `workflow` scope
+```
+
+所以工作流文件被移到了 `deploy/github-actions-deploy.yml` 作为备用方案（内容仍然有效）。
+如果你以后想启用全自动构建：
+
+```bash
+gh auth refresh -h github.com -s workflow
+mkdir -p .github/workflows
+git mv deploy/github-actions-deploy.yml .github/workflows/deploy.yml
+git commit -m "启用 Actions 自动部署"
+```
+
+然后再去仓库 **Settings → Pages → Source** 改成 **GitHub Actions**。
+
+### 日常更新：一条命令
+
+```bash
+npm run deploy          # 用 /pomodoro/ 基路径构建，并把 dist 推到 gh-pages
+npm run verify          # 检查线上每个资源是否都返回 200
+```
+
+`npm run deploy` **只访问 `api.github.com`**，不走 `git push`。这一点很重要：部分网络环境（尤其国内）会阻断 `github.com:443` 但 `api.github.com` 正常，此时 `git push` 会超时失败，而 `npm run deploy` 仍然能用。
+
+先用 `npm run netcheck` 可以诊断当前网络对各个 GitHub 主机的连通性。
+
+### 直接用 git push
+
+网络正常时也可以照常：
+
+```bash
+git push
+```
+
+注意 `main` 分支的推送**不包含** `.github/workflows/` 下的文件（已移走），所以不会触发 `workflow` 权限问题。推完后还需要 `npm run deploy` 才会更新线上站点。
 
 ---
 
@@ -72,7 +118,7 @@ npm run icons
 
 完整步骤见 [iPhone安装教程.md](./iPhone安装教程.md)。要点：
 
-1. 用 **Safari** 打开部署好的 HTTPS 地址
+1. 用 **Safari** 打开 <https://shichao194416.github.io/pomodoro/>
 2. 点「分享」→「添加到主屏幕」
 3. 桌面出现番茄图标，点开即全屏运行
 
@@ -109,8 +155,15 @@ src/
 tools/
   make-icons.mjs            生成 PNG 图标
   serve.mjs                 零依赖静态预览服务器
+  deploy-pages.mjs          一键部署（构建 + API 推送到 gh-pages）
+  gh-api-push.mjs           用 GitHub REST API 推送目录到某个分支
+  verify-site.mjs           校验线上资源是否全部可访问
+  netcheck.mjs              诊断 GitHub 各主机连通性
+  fetch-gh.mjs              下载便携版 gh CLI
+deploy/
+  github-actions-deploy.yml 可选的 Actions 自动部署（需 workflow 权限）
 dev/
-  frame.html                iPhone 尺寸预览页
+  frame.html                iPhone 横竖屏尺寸预览页
 ```
 
 ---

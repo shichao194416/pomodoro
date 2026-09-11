@@ -11,6 +11,10 @@
     "test:watch": "vitest",
     "icons": "node tools/make-icons.mjs",
     "serve": "node tools/serve.mjs",
+    "deploy": "node tools/deploy-pages.mjs",
+    "deploy:push": "node tools/gh-api-push.mjs dist gh-pages \"deploy\"",
+    "verify": "node tools/verify-site.mjs",
+    "netcheck": "node tools/netcheck.mjs",
     "preview": "vite preview"
   },
   "dependencies": {
