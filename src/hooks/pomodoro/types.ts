@@ -8,6 +8,9 @@ export interface PomodoroContextType extends PomodoroState {
   sessions: PomodoroSession[];
   setSessions: (sessions: PomodoroSession[]) => void;
   sessionDuration: React.RefObject<number>;
+  /** Planned length of the current phase — used to draw the progress ring. */
+  phaseTotal: number;
+  setPhaseTotal: (total: number) => void;
   startTimer: () => void;
   pauseTimer: () => void;
   stopTimer: () => void;

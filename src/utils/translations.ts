@@ -93,6 +93,12 @@ export interface Translations {
   monthDayLabel: string;
   streakDays: string;
 
+  // --- Landscape focus mode (added) ---
+  /** Label of the button that leaves the immersive landscape screen. */
+  exitFocus: string;
+  /** Label of the button that re-enters it from the normal landscape UI. */
+  enterFocus: string;
+
   // --- End-of-session alert (added) ---
   workDoneTitle: string;
   breakDoneTitle: string;
@@ -182,6 +188,8 @@ const translations: Record<Language, Translations> = {
 	yesterdayLabel: 'Yesterday',
 	monthDayLabel: '{m}/{d}',
 	streakDays: 'Day streak',
+	exitFocus: 'Exit focus',
+	enterFocus: 'Focus mode',
   },
 
   zh: {
@@ -259,6 +267,8 @@ const translations: Record<Language, Translations> = {
 	yesterdayLabel: '昨天',
 	monthDayLabel: '{m}月{d}日',
 	streakDays: '连续天数',
+	exitFocus: '退出横屏',
+	enterFocus: '专注模式',
   },
 
   es: {
@@ -336,6 +346,8 @@ const translations: Record<Language, Translations> = {
 	yesterdayLabel: 'Ayer',
 	monthDayLabel: '{d}/{m}',
 	streakDays: 'Días seguidos',
+	exitFocus: 'Salir',
+	enterFocus: 'Modo enfoque',
   },
 
   fr: {
@@ -413,6 +425,8 @@ const translations: Record<Language, Translations> = {
 	yesterdayLabel: 'Hier',
 	monthDayLabel: '{d}/{m}',
 	streakDays: 'Jours de suite',
+	exitFocus: 'Quitter',
+	enterFocus: 'Mode focus',
   },
 
   eo: {
@@ -490,6 +504,8 @@ const translations: Record<Language, Translations> = {
 	yesterdayLabel: 'Hieraŭ',
 	monthDayLabel: '{d}/{m}',
 	streakDays: 'Tagoj sinsekve',
+	exitFocus: 'Eliri',
+	enterFocus: 'Fokusa reĝimo',
   },
 
   ru: {
@@ -567,6 +583,8 @@ const translations: Record<Language, Translations> = {
 	yesterdayLabel: 'Вчера',
 	monthDayLabel: '{d}.{m}',
 	streakDays: 'Дней подряд',
+	exitFocus: 'Выйти',
+	enterFocus: 'Режим фокуса',
   },
 };
 

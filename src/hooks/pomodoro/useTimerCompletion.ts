@@ -24,6 +24,7 @@ interface UseTimerCompletionProps {
   stopTimer: () => void;
   setMode: (mode: PomodoroMode) => void;
   setTimeLeft: (time: number | ((prev: number) => number)) => void;
+  setPhaseTotal: (total: number) => void;
   saveSession: (session: PomodoroSession) => void;
 }
 
@@ -43,6 +44,7 @@ export function useTimerCompletion({
   stopTimer,
   setMode,
   setTimeLeft,
+  setPhaseTotal,
   saveSession,
 }: UseTimerCompletionProps) {
   const { playWorkComplete, playBreakComplete } = useSound();
@@ -88,7 +90,9 @@ export function useTimerCompletion({
 
     stopTimer();
     setMode(nextMode);
-    setTimeLeft(nextMode === 'work' ? defaultWorkTime : defaultBreakTime);
+    const nextDuration = nextMode === 'work' ? defaultWorkTime : defaultBreakTime;
+    setTimeLeft(nextDuration);
+    setPhaseTotal(nextDuration);
   }, [
     timeLeft,
     showConfirmModal,
@@ -101,6 +105,7 @@ export function useTimerCompletion({
     stopTimer,
     setMode,
     setTimeLeft,
+    setPhaseTotal,
     playWorkComplete,
     playBreakComplete,
     translations,

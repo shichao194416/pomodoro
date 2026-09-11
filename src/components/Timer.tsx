@@ -1,57 +1,39 @@
 import { Play, Pause, RotateCcw, Square, Sun } from "lucide-react";
 import { usePomodoro } from "../hooks/pomodoro/PomodoroContext";
-import { useTimerCompletion } from "../hooks/pomodoro/useTimerCompletion";
 import { useFinishSession } from "../hooks/pomodoro/useFinishSession";
 import { useTimerEdit } from "../hooks/pomodoro/useTimerEdit";
-import { useWakeLock } from "../hooks/useWakeLock";
 import { useLanguage } from "../contexts/LanguageContext";
 import { ConfirmModal } from "./ConfirmModal";
 import { formatTimeMMSS } from "../utils/formatTime";
 import { ModeIndicator } from "./ModeIndicator";
-import { SessionAlert } from "./SessionAlert";
 import styles from './Timer.module.css';
 import { requestNotificationPermission } from '../utils/notifications';
 import { useSound } from '../hooks/useSound';
 
-export const Timer = () => {
+interface TimerProps {
+  /** Owned by App so the wake lock survives view changes. */
+  wakeLockActive: boolean;
+}
+
+/**
+ * The full pomodoro panel used in portrait and in the non-focus landscape
+ * layout. End-of-phase handling and the blocking alert live in App, so they
+ * still fire while this component is unmounted (stats view, focus mode).
+ */
+export const Timer = ({ wakeLockActive }: TimerProps) => {
   const {
 	timeLeft,
 	setTimeLeft,
+	setPhaseTotal,
 	isRunning,
 	startTimer,
 	pauseTimer,
-	stopTimer,
 	resetTimer,
-	tag,
-	mode,
-	setMode,
-	defaultWorkTime,
-	defaultBreakTime,
 	showConfirmModal,
-	saveSession,
-	sessionDuration,
   } = usePomodoro();
 
   const { translations } = useLanguage();
   const { unlock } = useSound();
-
-  // Keeps the screen on while a phase runs — this is what makes the
-  // end-of-phase alarm land on time on iPhone.
-  const wakeLockActive = useWakeLock(isRunning);
-
-  const { alert, closeAlert } = useTimerCompletion({
-	timeLeft,
-	mode,
-	tag,
-	defaultWorkTime,
-	defaultBreakTime,
-	showConfirmModal,
-	sessionDuration,
-	stopTimer,
-	setMode,
-	setTimeLeft,
-	saveSession,
-  });
 
   const { handleFinishSession, confirmFinishSession, cancelFinishSession } = useFinishSession();
 
@@ -67,6 +49,7 @@ export const Timer = () => {
 	isRunning,
 	timeLeft,
 	setTimeLeft,
+	setPhaseTotal,
   });
 
   return (
@@ -148,16 +131,6 @@ export const Timer = () => {
 		onCancel={cancelFinishSession}
 		title={translations.confirmFinish}
 		message={translations.confirmFinishMessage}
-	  />
-
-	  <SessionAlert
-		data={alert}
-		onStartNext={() => {
-		  // The completion hook already queued up the next phase's duration.
-		  startTimer();
-		  closeAlert();
-		}}
-		onDismiss={closeAlert}
 	  />
 	</div>
   );

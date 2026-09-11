@@ -32,6 +32,7 @@ export function PomodoroProvider({ children }: PomodoroProviderProps) {
     isRunning, setIsRunning,
     targetEndTime,
     sessionDuration,
+    phaseTotal, setPhaseTotal,
     startTimer, pauseTimer, stopTimer, resetTimer,
   } = useTimer({ defaultWorkTime, defaultBreakTime, mode, savedState });
 
@@ -62,6 +63,7 @@ export function PomodoroProvider({ children }: PomodoroProviderProps) {
         isRunning,
         mode,
         pauseTimer,
+        phaseTotal,
         renameTag,
         resetTimer,
         saveSession,
@@ -70,6 +72,7 @@ export function PomodoroProvider({ children }: PomodoroProviderProps) {
         sessions,
         setIsRunning,
         setMode,
+        setPhaseTotal,
         setSessionNote,
         setSessions,
         setShowConfirmModal,

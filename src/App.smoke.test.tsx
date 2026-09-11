@@ -6,14 +6,32 @@
  * translation keys, and — most importantly — whether the daily summary counts
  * the right sessions.
  */
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { render, screen, cleanup, fireEvent } from '@testing-library/react';
 import App from './App';
+import { LANDSCAPE_PHONE_QUERY } from './hooks/useMediaQuery';
 import { PomodoroProvider } from './hooks/pomodoro/PomodoroContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { LanguageProvider } from './contexts/LanguageContext';
 import { SettingsProvider } from './contexts/SettingsContext';
 import { ErrorBoundary } from './components/ErrorBoundary';
+
+/**
+ * jsdom has no matchMedia, so it is stubbed explicitly. Only the landscape
+ * query is made to match; the theme query stays false (light theme).
+ */
+function mockViewport({ landscapePhone }: { landscapePhone: boolean }) {
+  window.matchMedia = vi.fn().mockImplementation((query: string) => ({
+    matches: query === LANDSCAPE_PHONE_QUERY ? landscapePhone : false,
+    media: query,
+    onchange: null,
+    addListener: vi.fn(),
+    removeListener: vi.fn(),
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    dispatchEvent: vi.fn(),
+  })) as unknown as typeof window.matchMedia;
+}
 
 function renderApp() {
   return render(
@@ -48,6 +66,7 @@ const seedSessions = (sessions: StoredSession[]) =>
 
 beforeEach(() => {
   localStorage.clear();
+  mockViewport({ landscapePhone: false });
   Object.defineProperty(window.navigator, 'language', {
     value: 'zh-CN',
     configurable: true,
@@ -114,5 +133,51 @@ describe('番茄钟 App', () => {
     expect(screen.getByText('每日总结')).toBeTruthy();
     expect(screen.getAllByText(/0 分钟/).length).toBeGreaterThan(0);
     expect(screen.getByText(/今天还没有学习记录/)).toBeTruthy();
+  });
+
+  it('手机横屏时只渲染倒计时和退出按钮，其余界面全部卸载', () => {
+    mockViewport({ landscapePhone: true });
+    renderApp();
+
+    // The countdown, and the way out of focus mode.
+    expect(screen.getByText('25:00')).toBeTruthy();
+    expect(screen.getByRole('button', { name: '退出横屏' })).toBeTruthy();
+    // The one essential control is still there.
+    expect(screen.getByRole('button', { name: '开始' })).toBeTruthy();
+
+    // No chrome and no clutter at all.
+    expect(screen.queryByText('番茄钟')).toBeNull();          // header title
+    expect(screen.queryByText('计时')).toBeNull();             // bottom nav
+    expect(screen.queryByText('总结')).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Timer view' })).toBeNull();
+    expect(screen.queryByText('横屏查看效果更好')).toBeNull();  // portrait nudge
+    // The only label kept is the current phase, so a break is never mistaken
+    // for study time.
+    expect(screen.getByText('专注学习')).toBeTruthy();
+  });
+
+  it('退出专注模式后完整界面回来，且可以再进去', () => {
+    mockViewport({ landscapePhone: true });
+    renderApp();
+
+    fireEvent.click(screen.getByRole('button', { name: '退出横屏' }));
+
+    // Full interface is back…
+    expect(screen.getByText('番茄钟')).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Timer view' })).toBeTruthy();
+    expect(screen.queryByText('退出横屏')).toBeNull();
+
+    // …and there is a way back into focus mode.
+    const reenter = screen.getByRole('button', { name: '专注模式' });
+    fireEvent.click(reenter);
+    expect(screen.getByRole('button', { name: '退出横屏' })).toBeTruthy();
+  });
+
+  it('竖屏时不进入专注模式', () => {
+    mockViewport({ landscapePhone: false });
+    renderApp();
+
+    expect(screen.getByText('番茄钟')).toBeTruthy();
+    expect(screen.queryByText('退出横屏')).toBeNull();
   });
 });

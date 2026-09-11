@@ -5,12 +5,15 @@ interface UseTimerEditProps {
   isRunning: boolean;
   timeLeft: number;
   setTimeLeft: (time: number | ((prev: number) => number)) => void;
+  /** Kept in sync so the progress ring matches an edited duration. */
+  setPhaseTotal: (total: number) => void;
 }
 
 export function useTimerEdit({
   isRunning,
   timeLeft,
   setTimeLeft,
+  setPhaseTotal,
 }: UseTimerEditProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState('');
@@ -37,9 +40,10 @@ export function useTimerEdit({
     const seconds = parseTimeInput(editValue);
     if (seconds !== null) {
       setTimeLeft(seconds);
+      setPhaseTotal(seconds);
     }
     setIsEditing(false);
-  }, [editValue, setTimeLeft]);
+  }, [editValue, setTimeLeft, setPhaseTotal]);
 
   const cancelEdit = useCallback(() => {
     isCancelling.current = true;

@@ -12,6 +12,7 @@ export const ModeIndicator = () => {
 	pauseTimer,
 	timeLeft,
 	setTimeLeft,
+	setPhaseTotal,
 	defaultWorkTime,
 	defaultBreakTime
   } = usePomodoro();
@@ -56,6 +57,7 @@ export const ModeIndicator = () => {
 	// Update mode and restore timer to where it was
 	setMode(newMode);
 	setTimeLeft(savedTime);
+	setPhaseTotal(savedTime);
 	pauseTimer();
   }; 
 

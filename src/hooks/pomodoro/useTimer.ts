@@ -32,6 +32,13 @@ export function useTimer({ defaultWorkTime, defaultBreakTime, mode, savedState }
   const [isRunning, setIsRunning] = useState<boolean>(initialTimeState.isRunning);
   const [targetEndTime, setTargetEndTime] = useState<number | null>(initialTimeState.targetEndTime);
 
+  /**
+   * How long the current phase was planned to run. `timeLeft` alone is not
+   * enough to draw a progress ring: it changes every second, and it also
+   * changes when the user edits the time while idle.
+   */
+  const [phaseTotal, setPhaseTotal] = useState<number>(initialTimeState.timeLeft);
+
   // Track previous durations to detect settings changes
   const prevWorkDuration = useRef(defaultWorkTime);
   const prevBreakDuration = useRef(defaultBreakTime);
@@ -67,8 +74,10 @@ export function useTimer({ defaultWorkTime, defaultBreakTime, mode, savedState }
     if (!isRunning) {
       if (mode === 'work' && timeLeft === prevWorkDuration.current) {
         setTimeLeft(defaultWorkTime);
+        setPhaseTotal(defaultWorkTime);
       } else if (mode === 'break' && timeLeft === prevBreakDuration.current) {
         setTimeLeft(defaultBreakTime);
+        setPhaseTotal(defaultBreakTime);
       }
     }
     prevWorkDuration.current = defaultWorkTime;
@@ -79,6 +88,7 @@ export function useTimer({ defaultWorkTime, defaultBreakTime, mode, savedState }
 
   const startTimer = useCallback(() => {
     sessionDuration.current = timeLeft;
+    setPhaseTotal(timeLeft);
     setTargetEndTime(Date.now() + timeLeft * 1000);
     setIsRunning(true);
   }, [timeLeft]);
@@ -100,9 +110,11 @@ export function useTimer({ defaultWorkTime, defaultBreakTime, mode, savedState }
   }, []);
 
   const resetTimer = useCallback(() => {
+    const fresh = mode === 'work' ? defaultWorkTime : defaultBreakTime;
     setTargetEndTime(null);
     setIsRunning(false);
-    setTimeLeft(mode === 'work' ? defaultWorkTime : defaultBreakTime);
+    setTimeLeft(fresh);
+    setPhaseTotal(fresh);
   }, [mode, defaultWorkTime, defaultBreakTime]);
 
   return {
@@ -112,6 +124,8 @@ export function useTimer({ defaultWorkTime, defaultBreakTime, mode, savedState }
     setIsRunning,
     targetEndTime,
     sessionDuration,
+    phaseTotal,
+    setPhaseTotal,
     startTimer,
     pauseTimer,
     stopTimer,
